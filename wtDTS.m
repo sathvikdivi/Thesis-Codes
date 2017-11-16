@@ -6,7 +6,7 @@ function W = wtDTS(Dt)
 % W = polyval(P,Dt); % Kg
 
 Dttemp = [1:1:5];
-Wttemp = [0.3,0.7,1.69,4.20,6.84]; % tons, weight estimates from CAD models. First value is from real life.
+Wttemp = [0.3,0.7,1.69,4.20,6.84]; % tons, weight estimates from CAD models
 WtEqn = polyfit(Dttemp,Wttemp,3); % coming up with equation model for estimating weight based on the above available data
 
 W = 1000 * polyval(WtEqn,Dt); % kg

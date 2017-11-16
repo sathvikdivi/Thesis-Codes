@@ -3,11 +3,11 @@ function [Wt,HullMat] = WtHull(HullDes)
     
     global rho_seawater ;
     
-    Do = HullDes(1); %m, outer dia
-    Lo = HullDes(2); %m, outer length
-    LDo = HullDes(3); %m, L/D Ratio for the AUV Hull
-    CB = HullDes(4); % block coefficient 
-    thick = HullDes(5); % m, thickness
+    Do = HullDes(1); %m, inner dia
+    Lo = HullDes(2); %m
+    LDo = HullDes(3);
+    CB = HullDes(4); % block coefficient
+    thick = HullDes(5); % Safety Factor
     
     Di = (Do - 2*thick); %m   
     Li = (Lo - 2*thick); %m

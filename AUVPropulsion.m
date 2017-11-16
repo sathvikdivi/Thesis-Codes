@@ -1,7 +1,5 @@
 
-function [EPropTot,time_tot_days,P_Turbine,P_AUV] = AUVPropulsion(Turb,Hull,Wing,velocities)
-% Function to compute the propulsion energy for a given configuration of
-% the AUV Generator. 
+function [E_Prop,time_tot,P_Turbine,P_AUV] = AUVPropulsion(Turb,Hull,Wing,velocities)
 
 global rho_seawater ShuttleDistance Efficiencies;
 
@@ -37,53 +35,27 @@ v_rated = velocities(1); % m/s
 v_AUV = velocities(2); % m/s
 v_current = velocities(3); % m/s
 
+% resultant and advance velocities
+beta = rad2deg(asin(v_current/v_AUV));  % degrees. AUV resultant velocity is perpendicular to the direction of current.
+v_resultant = v_AUV*cos(deg2rad(beta)); % m/s
+v_advance = sqrt((v_AUV*cos(deg2rad(beta)))^2 + (v_AUV*sin(deg2rad(beta)) + v_current)^2); % m/s 
+
+% Drag Forces
+F_drag_DTS = Cd_DTS_Moving*0.5*rho_seawater*Ae.*v_advance^2 ; % N
+F_drag_Hull = Cd_Hull*0.5*rho_seawater*WS.*v_advance^2 ; % N
+F_drag_Wing = Cd_wing*rho_seawater*Aeff_wing.*v_advance^2; % N
+F_drag_total = 2*F_drag_DTS + F_drag_Hull + F_drag_Wing ; % N, Total drag force on the AUV Generator 
+
+time = (ShuttleDistance/(v_resultant))./3600; % hours, Range travel time
+
+P_Prop = (F_drag_total*v_advance)./(Efficiencies.Hull*Efficiencies.BehindHullProp*Efficiencies.Shaft*Efficiencies.Motor)  ; % (W) Propulsive Power ; % W
+E_Prop = 0.001*P_Prop*time; % kWh, Energy input to the propeller
+
+time_tot = time; % hours
+
 %%%%%%%%%% Rated Power of AUV Generator %%%%%%%%%
 [P_Turbine,P_AUV] = AUVPowEstimator(Ae,Cp_DTS,v_rated); % kW 
 % This would now give the Total Power Rating of the AUV. The energy that
 % goes in to the batteries in the storage bay.
-
-%%%%%%%%%%% Upstream %%%%%%%%%%%%%%%%
-
-% Upstream Case
-v_advance_us = v_AUV + v_current ; % (m/s)
-v_rel_us = v_AUV - v_current ; % (m/s)  
-time_us = (ShuttleDistance./v_rel_us)/3600 ; %(hours)
-
-% Drag Forces
-F_drag_wing_us = Cd_wing*0.5*rho_seawater*Aeff_wing.*v_advance_us^2; % drag force on the winged portion (N)
-F_drag_Hull_us = Cd_Hull*0.5*rho_seawater*WS*v_advance_us.^2 ; % (N)
-F_drag_DTS_us = Cd_DTS_Moving*0.5*rho_seawater*Ae.*v_advance_us.^2; % (N)
-F_drag_total_us = 2*F_drag_DTS_us + F_drag_Hull_us + F_drag_wing_us; % (N) Total Drag force on AUV 
-
-% Propulsive Power & Energy - Power & Energy delivered to the propeller
-P_Prop_us =  0.001*(F_drag_total_us.*v_advance_us)./(Efficiencies.Hull*Efficiencies.BehindHullProp*Efficiencies.Shaft*Efficiencies.Motor) ; % (kW) Power Output from Propeller Motor 
-E_Prop_us = P_Prop_us.*time_us ; % kWh Energy output from Propeller Motor
-
-%%%%%%%%%% Downstream %%%%%%%%%%%%%%%%
-
-% Downstream Case
-v_advance_ds = v_AUV - v_current ; % (m/s)
-v_rel_ds = v_AUV + v_current ; % (m/s)
-time_ds = (ShuttleDistance./v_rel_ds)/3600 ; %(hours)
-
-% Drag Forces
-F_drag_wing_ds = Cd_wing*0.5*rho_seawater*Aeff_wing.*v_advance_ds.^2; % drag force on the winged portion (N)
-F_drag_Hull_ds = Cd_Hull*0.5*rho_seawater*WS.*v_advance_ds.^2 ; % (N)
-F_drag_DTS_ds = Cd_Hull*0.5*rho_seawater*Ae.*v_advance_ds.^2; % (N)
-F_drag_total_ds = 2*F_drag_DTS_ds + F_drag_Hull_ds + F_drag_wing_ds ; % (N) Total Drag force on AUV 
-
-% Propulsive Power & Energy - Power & Energy delivered to the propeller
-P_Prop_ds = (F_drag_total_ds.*v_advance_ds)./(Efficiencies.Hull*Efficiencies.BehindHullProp*Efficiencies.Shaft*Efficiencies.Motor)  ; % (W) Propulsive Power 
-E_Prop_ds = 0.001*P_Prop_ds.*time_ds ; % kWh Energy input to the propeller
-
-%%%%%%%%%% Total travel times and Energy %%%%%%%%%%%%%% 
-
-time_tot = time_us + time_ds ; % (hours) time for the onward & return trip
-time_us_days = round(time_us/24,2); % (days) upstream
-time_ds_days = round(time_ds/24,2); % (days) downstream
-time_tot_days = round(time_tot/24,2); % (days)
-
-EPropTot = (E_Prop_us + E_Prop_ds)*0.001; % (MWh)
-
 
 end

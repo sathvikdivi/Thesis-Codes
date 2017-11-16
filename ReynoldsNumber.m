@@ -15,7 +15,9 @@ function [Fd_wing,Cd_wing,beff,bref,Aeff_wing,Aref_wing,ChordLength_In,ChordLeng
 % 
 % Re = Re*1e-6;
 % Re = round(Re,2);
-global rho_seawater ;
+
+global rho_seawater;
+
 
 Cd = [8.5,7.77,7.37,7.05,6.92,6.73;7.38,6.94,6.67,6.44,6.38,6.24;...
      6.94,6.55,6.38,6.23,6.12,6.03;6.68,6.39,6.22,6.04,6.02,5.91;...
@@ -51,9 +53,9 @@ else
     c = 0;
 end
 
-P = polyfit(TurbDias,Cd(:,r),4); % polynomial equation for drag 
+P = polyfit(TurbDias,Cd(:,r),4); % polynomial equation for drag
 
-t = 21 ; % 21% thickness , NACA 21
+t = 21 ; % 21% thickness , NACA 0021
 Dh = 0.15*Dt; % hub diameter, m
 ChordThick_In = Dh; % m, inner thickness of the chord
 ChordLength_Out = Dh./0.17; % m, outer length of the chord
@@ -78,7 +80,6 @@ else
 end
 
 Fd_wing = Cd_wing*0.5*rho_seawater*Aeff_wing*v^2 ; % N
-
 
 end
 

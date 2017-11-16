@@ -1,10 +1,11 @@
 function [Thickness] = RatedThickness(D,RatedPressure)
     
     global Buffers Aluminium;
-     
+    
     Sigma = Aluminium.YieldStrength ; 
-    SF = Buffers.StructuralBuffer ; 
+    SF = Buffers.StructuralBuffer ;  
+    
     r = 0.5*D;
-    Thickness = (RatedPressure*r)./(SF*Sigma); %m
+    Thickness = (RatedPressure*r)./(SF*2*Sigma);
 
 end
