@@ -44,9 +44,9 @@ v_current = velocities(3); % m/s
 
 %%%%%%%%%%% Upstream %%%%%%%%%%%%%%%%
 
-beta = rad2deg(asin(v_current/v_AUV));  % degrees. AUV resultant velocity is perpendicular to the direction of current.
-v_rel_us = v_AUV*cos(deg2rad(beta)); % m/s
-v_advance_us = sqrt((v_AUV*cos(deg2rad(beta)))^2 + (v_AUV*sin(deg2rad(beta)) + v_current)^2); % m/s  
+% Upstream Case
+v_advance_us = v_AUV + v_current ; % (m/s)
+v_rel_us = v_AUV - v_current ; % (m/s)  
 time_us = (ShuttleDistance./v_rel_us)/3600 ; %(hours)
 
 % Drag Forces
@@ -61,9 +61,9 @@ E_Prop_us = P_Prop_us.*time_us ; % kWh Energy output from Propeller Motor
 
 %%%%%%%%%% Downstream %%%%%%%%%%%%%%%%
 
-beta = rad2deg(asin(v_current/v_AUV));  % degrees. AUV resultant velocity is perpendicular to the direction of current.
-v_rel_ds = v_AUV*cos(deg2rad(beta)); % m/s
-v_advance_ds = sqrt((v_AUV*cos(deg2rad(beta)))^2 + (v_AUV*sin(deg2rad(beta)) + v_current)^2); % m/s  
+% Downstream Case
+v_advance_ds = v_AUV - v_current ; % (m/s)
+v_rel_ds = v_AUV + v_current ; % (m/s)
 time_ds = (ShuttleDistance./v_rel_ds)/3600 ; %(hours)
 
 % Drag Forces

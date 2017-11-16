@@ -28,7 +28,7 @@ v_rated     = velocities(1);  % Rated Velocity (m/s)
 v_AUV       = velocities(2); % AUV Cruise Velocity (m/s)
 v_current   = velocities(3); % Current Velocity (m/s)
 
-% Battery spec: 100 Whr/ kg; 120 Whr/ L; Density: 1200 kg/ m3
+% Battery spec: 200 Whr/ kg; 300 Whr/ L; Density: 1200 kg/ m3
 % Assumption: Storage Volume is the entire volume. Batteries occupy a part 
 % of this volume. Once we do this, we work backwards seeking the balance
 % point and thereby zero in on the number of batteries that can be fit
